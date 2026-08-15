@@ -20,11 +20,12 @@ HSP3言語用のコマンドラインコンパイラです。主にWindowsのPow
 - HSP3のシステムフォルダのパス : `C:\hsp38`
 - 実行するHSP3言語スクリプトファイルのパス : `C:\Path\To\MyProject\main.hsp`
 <br>ファイルの内容は以下の通りです。
-<br>
+
 ```
 mes "Hello, world."
 stop
 ```
+
 - デバッグ情報を「start.ax」ファイルに書き込む処理を有効にする
 - 実行時にデバッグウィンドウを表示する
 

@@ -374,6 +374,7 @@ code {
 <li>このソフトウェアを動作させるには、PowerShellがインストールされているWindows環境が必要です。コマンドプロンプト上でもこのツールは動作しますが、ツールの内部でPowerShellも使用しています。</li>
 <li>「HSP3.8beta1」で動作を確認と開発をしております。</li>
 <li>後述の「基本的な使い方」ではHSP3の互換性を考慮して「hsp3runner32.exe」を使用した例を記述しておりますが、「HSP3.8」以降のバージョンでは「hsp3runner64.exe」を使用することをおすすめします。</li>
+<li>スクリプトファイルの名前には、英数字とアンダーバーやハイフンのみで記述することをおすすめします。</li>
 </ul>
 <h2 id="基本的な使い方">基本的な使い方</h2>
 <p>今回の使用例では、以下の設定でHSP3言語スクリプトファイルを実行します。</p>
@@ -396,8 +397,10 @@ stop
 <p>これからPowerShellやコマンドプロンプトに入力するコマンドは、以下の形式です。</p>
 <p><code>[HSP3のシステムフォルダ]\hsp3runner32.exe --[オプション1の名前] [オプション1の内容] --[オプション2の名前] [オプション2の内容] [(以降任意の回数記述してください。)]</code></p>
 <h3 id="3---コマンドの入力と実行">3 - コマンドの入力と実行</h3>
-<p>PowerShellやコマンドプロンプトを起動し、以下のコマンドを入力し実行すると、ウィンドウが表示され、ウィンドウ内に「Hello, world.」と表示されます。</p>
-<p><code>C:\hsp38\hsp3runner32.exe --source &quot;C:\Path\To\MyProject\main.hsp&quot; --debug-info on --debug-window on</code></p>
+<p>PowerShellを起動し、カレントディレクトリを「<code>C:\Path\To\MyProject</code>」に設定し、以下のコマンドを入力し実行すると、ウィンドウが表示され、ウィンドウ内に「Hello, world.」と表示されます。</p>
+<p><code>C:\hsp38\hsp3runner32.exe --source &quot;$pwd\main.hsp&quot; --debug-info on --debug-window on</code></p>
+<p>コマンドプロンプトの場合は以下の通りです。</p>
+<p><code>C:\hsp38\hsp3runner32.exe --source &quot;%CD%\main.hsp&quot; --debug-info on --debug-window on</code></p>
 <p>表示されたウィンドウを閉じると、「hsp3runner32.exe」の処理は自動的に終了します。</p>
 <h3 id="4---コマンドオプション一覧">4 - コマンドオプション一覧</h3>
 <p>hsp3runnerで使用できるオプション一覧です。オプションの内容に<code>[path]</code>を指定するオプションには、「<code>&quot;</code>(ダブルクォーテーション)」で囲んで入力することをお勧めします。</p>

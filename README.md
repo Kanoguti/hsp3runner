@@ -11,6 +11,7 @@ HSP3言語用のコマンドラインコンパイラです。主にWindowsのPow
 - このソフトウェアを動作させるには、PowerShellがインストールされているWindows環境が必要です。コマンドプロンプト上でもこのツールは動作しますが、ツールの内部でPowerShellも使用しています。
 - 「HSP3.8beta1」で動作を確認と開発をしております。
 - 後述の「基本的な使い方」ではHSP3の互換性を考慮して「hsp3runner32.exe」を使用した例を記述しておりますが、「HSP3.8」以降のバージョンでは「hsp3runner64.exe」を使用することをおすすめします。
+- スクリプトファイルの名前には、英数字とアンダーバーやハイフンのみで記述することをおすすめします。
 
 ## 基本的な使い方
 
@@ -41,9 +42,13 @@ stop
 
 ### 3 - コマンドの入力と実行
 
-PowerShellやコマンドプロンプトを起動し、以下のコマンドを入力し実行すると、ウィンドウが表示され、ウィンドウ内に「Hello, world.」と表示されます。
+PowerShellを起動し、カレントディレクトリを「`C:\Path\To\MyProject`」に設定し、以下のコマンドを入力し実行すると、ウィンドウが表示され、ウィンドウ内に「Hello, world.」と表示されます。
 
-`C:\hsp38\hsp3runner32.exe --source "C:\Path\To\MyProject\main.hsp" --debug-info on --debug-window on`
+`C:\hsp38\hsp3runner32.exe --source "$pwd\main.hsp" --debug-info on --debug-window on`
+
+コマンドプロンプトの場合は以下の通りです。
+
+`C:\hsp38\hsp3runner32.exe --source "%CD%\main.hsp" --debug-info on --debug-window on`
 
 表示されたウィンドウを閉じると、「hsp3runner32.exe」の処理は自動的に終了します。
 

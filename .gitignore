@@ -1,0 +1,7 @@
+*.exe
+!hsp3runner64.exe
+!hsp3runner32.exe
+hsptmp
+obj
+packfile
+*.ax

@@ -1,0 +1,2 @@
+#define export_bit_32
+#include "hsp3runner.hsp"

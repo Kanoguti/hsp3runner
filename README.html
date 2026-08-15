@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> or <div class="page"></div> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="hsp3runner---hsp3言語用コマンドラインコンパイラ">hsp3runner - HSP3言語用コマンドラインコンパイラ</h1>
+<p>2026 Kanoguti</p>
+<h2 id="このソフトウェアについて">このソフトウェアについて</h2>
+<p>HSP3言語用のコマンドラインコンパイラです。主にWindowsのPowerShellやコマンドプロンプト上からHSP3言語スクリプトファイルを実行したり、実行ファイルを生成することができます。</p>
+<h2 id="注意事項">注意事項</h2>
+<ul>
+<li>このソフトウェアを動作させるには、PowerShellがインストールされているWindows環境が必要です。コマンドプロンプト上でもこのツールは動作しますが、ツールの内部でPowerShellも使用しています。</li>
+<li>「HSP3.8beta1」で動作を確認と開発をしております。</li>
+<li>後述の「基本的な使い方」ではHSP3の互換性を考慮して「hsp3runner32.exe」を使用した例を記述しておりますが、「HSP3.8」以降のバージョンでは「hsp3runner64.exe」を使用することをおすすめします。</li>
+</ul>
+<h2 id="基本的な使い方">基本的な使い方</h2>
+<p>今回の使用例では、以下の設定でHSP3言語スクリプトファイルを実行します。</p>
+<ul>
+<li>使用する「hsp3runner」の実行ファイル : <code>hsp3runner32.exe</code></li>
+<li>HSP3のシステムフォルダのパス : <code>C:\hsp38</code></li>
+<li>実行するHSP3言語スクリプトファイルのパス : <code>C:\Path\To\MyProject\main.hsp</code>
+<br>ファイルの内容は以下の通りです。
+<br></li>
+</ul>
+<pre class="hljs"><code><div>mes &quot;Hello, world.&quot;
+stop
+</div></code></pre>
+<ul>
+<li>デバッグ情報を「start.ax」ファイルに書き込む処理を有効にする</li>
+<li>実行時にデバッグウィンドウを表示する</li>
+</ul>
+<h3 id="1---hsp3runner32exeファイルの移動">1 - 「hsp3runner32.exe」ファイルの移動</h3>
+<p>「hsp3runner32.exe」ファイルをHSP3言語のシステムフォルダの中に移動させてください。</p>
+<h3 id="2---コマンドの文法">2 - コマンドの文法</h3>
+<p>これからPowerShellやコマンドプロンプトに入力するコマンドは、以下の形式です。</p>
+<p><code>[HSP3のシステムフォルダ]\hsp3runner32.exe --[オプション1の名前] [オプション1の内容] --[オプション2の名前] [オプション2の内容] [(以降任意の回数記述してください。)]</code></p>
+<h3 id="3---コマンドの入力と実行">3 - コマンドの入力と実行</h3>
+<p>PowerShellやコマンドプロンプトを起動し、以下のコマンドを入力し実行すると、ウィンドウが表示され、ウィンドウ内に「Hello, world.」と表示されます。</p>
+<p><code>C:\hsp38\hsp3runner32.exe --source &quot;C:\Path\To\MyProject\main.hsp&quot; --debug-info on --debug-window on</code></p>
+<p>表示されたウィンドウを閉じると、「hsp3runner32.exe」の処理は自動的に終了します。</p>
+<h3 id="4---コマンドオプション一覧">4 - コマンドオプション一覧</h3>
+<p>hsp3runnerで使用できるオプション一覧です。オプションの内容に<code>[path]</code>を指定するオプションには、「<code>&quot;</code>(ダブルクォーテーション)」で囲んで入力することをお勧めします。</p>
+<ul>
+<li><code>--source [path]</code><br>処理対象とするHSP3スクリプトファイルを絶対パスで指定します。このオプションを省略すると、「hsp3runner」の実行ファイルがあるフォルダ内の「<code>main.hsp</code>」に設定されます。</li>
+<li><code>--mode [run/build]</code><br>処理対象とするHSP3スクリプトファイルを使って「スクリプトの実行」を行うか「exeファイルをビルド」するかの設定を行います。「<code>run</code>」にすると「スクリプトの実行」、「<code>build</code>」にすると「exeファイルをビルド」を行います。このオプションを省略すると、「<code>run</code>」に設定されます。</li>
+<li><code>--system [path]</code><br>HSP3言語のシステムフォルダを絶対パスで指定します。例えば「<code>&quot;C:\hsp38&quot;</code>」のように入力します。このオプションを省略すると、「hsp3runner」の実行ファイルがあるフォルダに設定されます。</li>
+<li><code>--common [name]</code><br>HSP3言語のシステムフォルダ内にある「common」フォルダの名前を指定します。ここで指定するフォルダの名前は「<code>--system</code>」オプションで指定したパスから見たフォルダ名を相対パスで指定します。ほとんどの場合、デフォルト値である「<code>common</code>」のままで大丈夫です。</li>
+<li><code>--debug-info [on/off]</code><br>処理対象とするHSP3スクリプトファイルのコンパイルをする際に、デバッグ情報をオブジェクトファイルに書き込むかの設定を行います。「<code>on</code>」にすると書き込みが有効になります。このオプションを省略すると、「<code>off</code>」に設定されます。</li>
+<li><code>--debug-window [on/off]</code><br>処理対象とするHSP3スクリプトファイルの実行をする際に、デバッグウィンドウを表示するかの設定を行います。「<code>on</code>」にすると表示されます。このオプションを省略すると、「<code>off</code>」に設定されます。</li>
+<li><code>--string [shift-jis/utf-8]</code><br>処理対象とするHSP3スクリプトファイルがどの文字コードで記述されているかを指定します。このオプションを省略すると、「<code>hsp3runner32.exe</code>」を使用している場合は「<code>shift-jis</code>」、「<code>hsp3runner64.exe</code>」を使用している場合は「<code>utf-8</code>」に設定されます。</li>
+<li><code>--charset [shift-jis/utf-8]</code><br>処理対象とするHSP3スクリプトファイルをコンパイルする際に、スクリプト内部の文字列をどの文字コードとしてコンパイルするかを設定します。「<code>--string</code>」オプションを「<code>shift-jis</code>」した際にこのオプションを「<code>utf-8</code>」に設定すると、スクリプトファイル内の文字列を「UTF-8」に変換してコンパイルされます。尚、「<code>--string</code>」オプションを「<code>utf-8</code>」、「<code>--charset</code>」オプションを「<code>shift-jis</code>」にして、スクリプトファイル内の文字列を「UTF-8」から「Shift-JIS」に変換させることはできません。このオプションを省略すると、「<code>hsp3runner32.exe</code>」を使用している場合は「<code>shift-jis</code>」、「<code>hsp3runner64.exe</code>」を使用している場合は「<code>utf-8</code>」に設定されます。</li>
+<li><code>--bit [32/64]</code><br>処理対象とするHSP3スクリプトファイルをコンパイルする際のデフォルトランタイムのビット数を指定します。このオプションを省略すると、「<code>hsp3runner32.exe</code>」を使用している場合は「<code>32</code>」、「<code>hsp3runner64.exe</code>」を使用している場合は「<code>64</code>」に設定されます。</li>
+<li><code>--emscripten [on/off]</code><br>処理対象とするHSP3スクリプトファイルをコンパイルする際、「Emscripten」向けにコンパイルするかの設定を行います。このオプションを省略すると、「<code>off</code>」に設定されます。</li>
+<li><code>--obj [name]</code><br>処理対象とするHSP3スクリプトファイルをコンパイル後に生成されるオブジェクトファイルの名前を設定します。このオプションを省略すると、「<code>start.ax</code>」に設定されます。</li>
+<li><code>--option [string]</code><br>処理対象とするHSP3スクリプトファイルを実行する際のコマンドラインオプションを文字列で設定します。文字列内にスペースが含まれる場合、「<code>&quot;</code>(ダブルクォーテーション)」で囲むことをおすすめします。このオプションを省略すると、空の文字列に設定されます。</li>
+</ul>
+<h2 id="ライセンス">ライセンス</h2>
+<p>MIT License</p>
+<h2 id="作者">作者</h2>
+<p>Kanoguti<br>Website : <code>https://kanoguti93.neocities.org/</code></p>
+
+</body>
+</html>

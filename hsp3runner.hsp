@@ -1,0 +1,617 @@
+#ifdef export_bit_32
+#define export_name "hsp3runner32"
+#else
+#define export_name "hsp3runner64"
+#endif
+#packopt name export_name
+
+#ifdef export_bit_32
+#include "hsp3cl.as"
+#else
+#include "hsp3cl_64.as"
+#endif
+#include "hspcmp.as"
+
+#module struct_mod size,member_count,member_offset,member_size,alignment
+
+#ifndef __hsp64__@
+#const ptrsize 4
+#else
+#const ptrsize 8
+#endif
+
+#modinit str p_size_list, local temp_text,local temp_list,local temp_list2,local temp_list2_count
+struct_reset thismod
+
+temp_text=p_size_list
+strrep temp_text,"\n",""
+strrep temp_text,"\t",""
+strrep temp_text," ",""
+sdim temp_list
+split temp_text,",",temp_list
+member_count=int(stat)
+struct_clear thismod
+
+alignment=0
+
+repeat member_count
+sdim temp_list2
+split temp_list(cnt),":",temp_list2
+temp_list2_count=int(stat)
+if temp_list2_count>=2:{
+	if temp_list2(1)=="pointer":temp_list2(1)=""+ ptrsize +""
+	if temp_list2_count>=3:{
+		if temp_list2(2)=="pointer":temp_list2(2)=""+ ptrsize +""
+		if int(temp_list2(2))>0:{
+			if size\int(temp_list2(2))!=0:{
+				size=(size/int(temp_list2(2))+1)*int(temp_list2(2))
+			}
+		}
+		if alignment<int(temp_list2(2)):alignment=int(temp_list2(2))
+	} else {
+		if int(temp_list2(1))>0:{
+			if size\int(temp_list2(1))!=0:{
+				size=(size/int(temp_list2(1))+1)*int(temp_list2(1))
+			}
+		}
+		if alignment<int(temp_list2(1)):alignment=int(temp_list2(1))
+	}
+	member_name(cnt)=temp_list2(0)
+	member_offset(cnt)=size
+	member_size(cnt)=int(temp_list2(1))
+	
+	size+=int(temp_list2(1))
+}
+loop
+if alignment>0:{
+	if size\alignment!=0:{
+		size=(size/alignment+1)*alignment
+	}
+}
+return
+
+#modfunc struct_reset
+dim size
+dim member_count
+sdim member_name
+dim member_offset
+dim member_size
+dim alignment
+return
+
+#modfunc struct_clear
+dim size
+sdim member_name,,member_count
+dim member_offset,member_count
+dim member_size,member_count
+dim alignment
+return
+
+#modcfunc struct_size
+return size
+
+#modcfunc struct_alignment
+return alignment
+
+#modcfunc struct_member_name int p_index, local temp
+temp=""
+if 0<=p_index && p_index<member_count:{
+	temp=member_name(p_index)
+}
+return temp
+
+#modcfunc struct_member_index str p_name, local temp
+temp=-1
+repeat member_count
+if member_name(cnt)==p_name:temp=cnt:break
+loop
+return temp
+
+#modcfunc struct_member_size int p_index, local temp
+temp=0
+if 0<=p_index && p_index<member_count:{
+	temp=member_size(p_index)
+}
+return temp
+
+#modcfunc struct_member_offset int p_index, local temp
+temp=-1
+if 0<=p_index && p_index<member_count:{
+	temp=member_offset(p_index)
+}
+return temp
+
+#modfunc struct_make var p_var
+memexpand p_var,size
+memset p_var,0,varsize(p_var),0
+return
+
+#modfunc struct_write var p_var,int p_index,var p_data
+if 0<=p_index && p_index<member_count:{
+	memcpy p_var,p_data,member_size(p_index),member_offset(p_index),0
+}
+return
+
+#define global struct_write_value(%1,%2,%3=0,%4=0) dummy@struct_mod=(%4):struct_write %1,%2,%3,dummy@struct_mod
+
+#modfunc struct_read var p_var,int p_index,var p_data
+if 0<=p_index && p_index<member_count:{
+	memcpy p_data,p_var,member_size(p_index),0,member_offset(p_index)
+}
+return
+
+#modcfunc struct_read_value var p_var,int p_index,int p_vartype, local temp
+dimtype temp,p_vartype
+struct_read thismod,p_var,p_index,temp
+return temp
+
+#global
+
+#module
+
+#deffunc divide_string str p_string,array p_return, local temp_string,local temp_byte,local temp_char,local temp_index,local temp_count
+sdim p_return
+temp_count=0
+temp_string=p_string
+temp_index=0
+while
+temp_byte=peek(temp_string,temp_index)
+#ifndef __hsp64__@
+sdim temp_char,3
+if (0x81<=temp_byte && temp_byte<=0x9f) || (0xe0<=temp_byte && temp_byte<=0xef):{
+	memcpy temp_char,temp_string,2,0,temp_index
+	temp_index+=2
+} else {
+	memcpy temp_char,temp_string,1,0,temp_index
+	temp_index+=1
+}
+#else
+sdim temp_char,7
+if 0x00<=temp_byte && temp_byte<=0x7f:{
+	memcpy temp_char,temp_string,1,0,temp_index
+	temp_index+=1
+} else:if 0x80<=temp_byte && temp_byte<=0xbf:{
+	_break
+} else:if 0xc0<=temp_byte && temp_byte<=0xdf:{
+	memcpy temp_char,temp_string,2,0,temp_index
+	temp_index+=2
+} else:if 0xe0<=temp_byte && temp_byte<=0xef:{
+	memcpy temp_char,temp_string,3,0,temp_index
+	temp_index+=3
+} else:if 0xf0<=temp_byte && temp_byte<=0xf7:{
+	memcpy temp_char,temp_string,4,0,temp_index
+	temp_index+=4
+} else:if 0xf8<=temp_byte && temp_byte<=0xfb:{
+	memcpy temp_char,temp_string,5,0,temp_index
+	temp_index+=5
+} else:if 0xfc<=temp_byte && temp_byte<=0xfd:{
+	memcpy temp_char,temp_string,6,0,temp_index
+	temp_index+=6
+} else:if 0xfe<=temp_byte && temp_byte<=0xff:{
+	_break
+}
+#endif
+
+p_return(temp_count)=temp_char
+temp_count++
+
+if temp_index>=strlen(temp_string):_break
+wend
+return temp_count
+
+#deffunc cmdline_analyzer str p_cmdline,array p_return, local temp_cmdline,local temp_char_list,local temp_char,local temp_string_flag,local temp_space_flag,local temp_count,local temp_list
+sdim p_return
+
+sdim temp_list
+temp_count=0
+temp_cmdline=p_cmdline
+temp_string_flag=0
+temp_space_flag=0
+sdim temp_char_list
+divide_string temp_cmdline,temp_char_list
+repeat stat
+temp_char=temp_char_list(cnt)
+switch temp_char
+	case " "
+	if temp_string_flag==0:{
+		if temp_space_flag==0:{
+			temp_count++
+			temp_list(temp_count)=""
+		}
+	} else {
+		temp_list(temp_count)+=temp_char
+	}
+	temp_space_flag=1
+	swbreak
+	case "\""
+	temp_list(temp_count)+=temp_char
+	if temp_string_flag==0:{
+		temp_string_flag=1
+	} else {
+		if temp_string_flag==1:{
+			if cnt!=0:{
+				if temp_char_list(cnt-1)=="`":{
+				} else {
+					temp_string_flag=0
+				}
+			} else {
+				temp_string_flag=0
+			}
+		} else {
+			temp_list(temp_count)+=temp_char
+		}
+	}
+	temp_space_flag=0
+	swbreak
+	case "'"
+	temp_list(temp_count)+=temp_char
+	if temp_string_flag==0:{
+		temp_string_flag=2
+	} else {
+		if temp_string_flag==2:{
+			if cnt!=0:{
+				if temp_char_list(cnt-1)=="'":{
+				} else {
+					temp_string_flag=0
+				}
+			} else {
+				temp_string_flag=0
+			}
+		} else {
+			temp_list(temp_count)+=temp_char
+		}
+	}
+	temp_space_flag=0
+	swbreak
+	default
+	temp_list(temp_count)+=temp_char
+	temp_space_flag=0
+	swbreak
+swend
+loop
+temp_count=0
+repeat length(temp_list)
+if strlen(temp_list(cnt))>0:{
+	p_return(temp_count)=temp_list(cnt)
+	temp_count++
+}
+loop
+return temp_count
+
+#defcfunc trim_quotes str p_str, local temp,local temp_count,local temp_return
+sdim temp
+divide_string p_str,temp
+temp_count=int(stat)
+temp_return=p_str
+if temp_count>=2:{
+	if temp(0)==temp(temp_count-1) && (temp(0)=="\"" || temp(0)=="'"):{
+		temp_return=""
+		repeat temp_count-2,1
+		temp_return+=temp(cnt)
+		loop
+	}
+}
+return temp_return
+
+#global
+
+#module
+
+#uselib "Kernel32.dll"
+#func CreateProcess "CreateProcessW" wptr,wstr,wptr,wptr,int,int,wptr,wptr,wptr,wptr
+#func CloseHandle "CloseHandle" sptr
+#func SetConsoleCP "SetConsoleCP" int
+#func SetConsoleOutputCP "SetConsoleOutputCP" int
+#func WaitForSingleObject "WaitForSingleObject" sptr,int
+
+#const INFINITE 0xFFFFFFFF
+
+#deffunc execute_command_init
+dimtype SECURITY_ATTRIBUTES,vartype("struct")
+newmod SECURITY_ATTRIBUTES,struct_mod,"nLength:4, lpSecurityDescriptor:pointer, bInheritHandle:1"
+dimtype STARTUPINFOW,vartype("struct")
+newmod STARTUPINFOW,struct_mod,"cb:4, lpReserved:pointer, lpDesktop:pointer, lpTitle:pointer, dwX:4, dwY:4, dwXSize:4, dwYSize:4, dwXCountChars:4, dwYCountChars:4, dwFillAttribute:4, dwFlags:4, wShowWindow:2, cbReserved2:2, lpReserved2:pointer, hStdInput:pointer, hStdOutput:pointer, hStdError:pointer"
+dimtype PROCESS_INFORMATION,vartype("struct")
+newmod PROCESS_INFORMATION,struct_mod,"hProcess:pointer, hThread:pointer, dwProcessId:4, dwThreadId:4"
+return
+
+#deffunc execute_command str p_command_line,int p_mode, local temp,local temp_list,local temp_command_line,local temp_STARTUPINFOW,local temp_PROCESS_INFORMATION,local temp_hProcess,local temp_hThread,local temp_return
+sdim temp_command_line
+temp_command_line=p_command_line
+if p_mode==0:{
+	temp_command_line="\""+ temp_command_line +"\""
+}
+sdim temp_list
+cmdline_analyzer temp_command_line,temp_list
+temp=int(stat)
+temp_command_line=""
+if temp>0:{
+	repeat temp
+	if p_mode==0 || (p_mode!=0 && cnt>0):{
+		if strlen(temp_list(cnt))>=2:{
+			if strmid(temp_list(cnt),0,1)==strmid(temp_list(cnt),-1,1) && (strmid(temp_list(cnt),0,1)=="\"" || strmid(temp_list(cnt),0,1)=="'"):{
+				switch strmid(temp_list(cnt),0,1)
+				case "\""
+				temp_list(cnt)=trim_quotes(temp_list(cnt))
+				strrep temp_list(cnt),"\"","\\\""
+				swbreak
+				case "'"
+				temp_list(cnt)=trim_quotes(temp_list(cnt))
+				strrep temp_list(cnt),"'","''"
+				strrep temp_list(cnt),"\"","\\\""
+				swbreak
+				swend
+				temp_command_line+="\""+ temp_list(cnt) +"\""
+			} else {
+				strrep temp_list(cnt),"'","''"
+				temp_command_line+="'"+ temp_list(cnt) +"'"
+			}
+		} else {
+			strrep temp_list(cnt),"''","'"
+			strrep temp_list(cnt),"'","''"
+			temp_command_line+="'"+ temp_list(cnt) +"'"
+		}
+		if cnt<temp-1:{
+			temp_command_line+=" "
+		}
+	}
+	loop
+}
+if p_mode==0:{
+	temp_command_line="powershell.exe -NoProfile -Command \"Write-Host '"+ temp_command_line +"' -ForegroundColor Red\""
+} else {
+	temp_list(0)=trim_quotes(temp_list(0))
+	temp_command_line="powershell.exe -NoProfile -Command \"Start-Process -FilePath '"+ temp_list(0) +"' -ArgumentList '"+ temp_command_line +"' -NoNewWindow -Wait\""
+}
+
+sdim temp_STARTUPINFOW
+struct_make STARTUPINFOW,temp_STARTUPINFOW
+struct_write_value STARTUPINFOW,temp_STARTUPINFOW,0,struct_size(STARTUPINFOW)
+sdim temp_PROCESS_INFORMATION
+struct_make PROCESS_INFORMATION,temp_PROCESS_INFORMATION
+temp_return=0
+CreateProcess int64(0),temp_command_line,int64(0),int64(0),0,0,int64(0),int64(0),varptr(temp_STARTUPINFOW),varptr(temp_PROCESS_INFORMATION)
+if int(stat)!=0:{
+	temp_hProcess=struct_read_value(PROCESS_INFORMATION,temp_PROCESS_INFORMATION,0,vartype("int64"))
+	temp_hThread=struct_read_value(PROCESS_INFORMATION,temp_PROCESS_INFORMATION,1,vartype("int64"))
+
+	WaitForSingleObject temp_hProcess,INFINITE
+
+	CloseHandle temp_hProcess
+	CloseHandle temp_hThread
+	
+	temp_return=1
+}
+return temp_return
+
+#global
+execute_command_init
+
+#module
+
+#defcfunc check_dir str p_path, local temp,local temp_return
+temp_return=1
+sdim temp
+dirlist temp,p_path,5
+if int(stat)==0:{
+	temp_return=0
+}
+return temp_return
+
+#defcfunc check_file str p_path, local temp_return
+temp_return=1
+exist p_path
+if int(strsize)==-1:{
+	temp_return=0
+}
+return temp_return
+
+#deffunc alert str p_title,str p_message,int p_mode, local temp
+#ifndef __hsp3cl__@
+dialog p_message,1,p_title
+#else
+temp=p_title,p_message
+execute_command "<<"+ temp(0) +">> "+ temp(1) +"",0
+#endif
+return
+
+#global
+
+/* Default Settings */
+source_path=""+ dir_exe +"\\main.hsp"
+execute_mode="run"
+system_path=dir_exe
+common_name="common"
+debug_info="off"
+debug_window="off"
+#ifndef __hsp64__
+string_mode="shift-jis"
+charset_mode="shift-jis"
+bit_mode="32"
+#else
+string_mode="utf-8"
+charset_mode="utf-8"
+bit_mode="64"
+#endif
+emscripten_flag="off"
+ax_name="start.ax"
+exe_name="hsptmp.exe"
+command_option=""
+/* ---- */
+
+temp_mode=""
+sdim cmdline_list
+cmdline_analyzer dir_cmdline,cmdline_list
+repeat stat
+cmdline_list(cnt)=trim_quotes(cmdline_list(cnt))
+if temp_mode=="":{
+	switch getpath(cmdline_list(cnt),16)
+	case "--source"
+	case "--mode"
+	case "--system"
+	case "--common"
+	case "--debug-info"
+	case "--debug-window"
+	case "--string"
+	case "--charset"
+	case "--bit"
+	case "--emscripten"
+	case "--obj"
+	case "--option"
+	temp_mode=cmdline_list(cnt)
+	swbreak
+	swend
+} else {
+	switch temp_mode
+	case "--source":source_path=cmdline_list(cnt):swbreak
+	case "--mode"
+		switch getpath(cmdline_list(cnt),16)
+		case "run":case "build"
+		execute_mode=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--system":system_path=cmdline_list(cnt):swbreak
+	case "--common":common_name=cmdline_list(cnt):swbreak
+	case "--debug-info"
+		switch getpath(cmdline_list(cnt),16)
+		case "on":case "off"
+		debug_info=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--debug-window"
+		switch getpath(cmdline_list(cnt),16)
+		case "on":case "off"
+		debug_window=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--string"
+		switch getpath(cmdline_list(cnt),16)
+		case "utf-8":case "shift-jis"
+		string_mode=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--charset"
+		switch getpath(cmdline_list(cnt),16)
+		case "utf-8":case "shift-jis"
+		charset_mode=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--bit"
+		switch getpath(cmdline_list(cnt),16)
+		case "64":case "32"
+		bit_mode=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--emscripten"
+		switch getpath(cmdline_list(cnt),16)
+		case "on":case "off"
+		emscripten_flag=getpath(cmdline_list(cnt),16)
+		swbreak
+		swend
+	swbreak
+	case "--obj":ax_name=cmdline_list(cnt):swbreak
+	case "--option":command_option=cmdline_list(cnt):swbreak
+	swend
+	temp_mode=""
+}
+loop
+
+#ifndef __hsp64__
+temp_dll="hspcmp.dll"
+#else
+temp_dll="hspcmp_64.dll"
+#endif
+if check_file(""+ dir_exe +"\\"+ temp_dll +"")==0:{
+	alert "ERROR","The \""+ temp_dll +"\" file was not found in the folder containing the \""+ export_name +"\" executable file. --> \""+ dir_exe +"\""
+	end
+}
+
+if check_dir(system_path)==0:{
+	alert "ERROR","The system folder could not be found. --> \""+ system_path +"\""
+	end
+}
+
+if check_file(source_path)==0:{
+	alert "ERROR","The source script file could not be found. --> \""+ source_path +"\""
+	end
+}
+
+chdir getpath(source_path,32)
+
+temp_compile_option=0
+temp_preprocess_option=0
+temp_debug_option=0
+
+if debug_info=="on":temp_compile_option|=1
+switch charset_mode
+case "utf-8"
+	temp_compile_option|=32
+	switch string_mode
+	case "utf-8"
+	swbreak
+	case "shift-jis"
+	temp_compile_option|=4
+	swbreak
+	swend
+swbreak
+case "shift-jis"
+swbreak
+swend
+switch bit_mode
+case "64"
+	temp_compile_option|=128
+swbreak
+case "32"
+swbreak
+swend
+if emscripten_flag=="on":temp_compile_option|=256
+
+temp_preprocess_option|=4
+
+if debug_window=="on":temp_debug_option=1
+
+hsc_ini getpath(source_path,8)
+hsc_compath ""+ system_path +"\\"+ common_name +"\\"
+hsc_objname ax_name
+hsc_comp temp_compile_option,temp_preprocess_option,temp_debug_option
+if int(stat)!=0:{
+	alert "ERROR","Compilation of the source script file failed. --> \""+ source_path +"\""
+	gosub *print_hspcmp_message
+	end
+}
+
+sdim temp_runtime,256
+hsc3_getruntime temp_runtime,ax_name
+if temp_runtime=="":temp_runtime="hsp3.exe"
+switch execute_mode
+case "run"
+	temp_command="'"+ system_path +"\\"+ temp_runtime +"' '"+ ax_name +"'"
+	if command_option!="":{
+		temp_command+=" '"+ command_option +"'"
+	}
+	execute_command temp_command,1
+swbreak
+case "build"
+	hsc3_make ""+ system_path +"\\"+ temp_runtime +"",1
+	if int(stat)!=0:{
+		alert "ERROR","Failed to create the executable file."
+		end
+	}
+swbreak
+swend
+
+end
+
+*print_hspcmp_message
+dim temp_size
+hsc3_messize temp_size
+sdim temp_message,temp_size
+hsc_getmes temp_message
+mes temp_message
+return

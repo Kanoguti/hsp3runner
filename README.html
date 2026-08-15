@@ -381,8 +381,7 @@ code {
 <li>使用する「hsp3runner」の実行ファイル : <code>hsp3runner32.exe</code></li>
 <li>HSP3のシステムフォルダのパス : <code>C:\hsp38</code></li>
 <li>実行するHSP3言語スクリプトファイルのパス : <code>C:\Path\To\MyProject\main.hsp</code>
-<br>ファイルの内容は以下の通りです。
-<br></li>
+<br>ファイルの内容は以下の通りです。</li>
 </ul>
 <pre class="hljs"><code><div>mes &quot;Hello, world.&quot;
 stop
@@ -414,7 +413,7 @@ stop
 <li><code>--bit [32/64]</code><br>処理対象とするHSP3スクリプトファイルをコンパイルする際のデフォルトランタイムのビット数を指定します。このオプションを省略すると、「<code>hsp3runner32.exe</code>」を使用している場合は「<code>32</code>」、「<code>hsp3runner64.exe</code>」を使用している場合は「<code>64</code>」に設定されます。</li>
 <li><code>--emscripten [on/off]</code><br>処理対象とするHSP3スクリプトファイルをコンパイルする際、「Emscripten」向けにコンパイルするかの設定を行います。このオプションを省略すると、「<code>off</code>」に設定されます。</li>
 <li><code>--obj [name]</code><br>処理対象とするHSP3スクリプトファイルをコンパイル後に生成されるオブジェクトファイルの名前を設定します。このオプションを省略すると、「<code>start.ax</code>」に設定されます。</li>
-<li><code>--option [string]</code><br>処理対象とするHSP3スクリプトファイルを実行する際のコマンドラインオプションを文字列で設定します。文字列内にスペースが含まれる場合、「<code>&quot;</code>(ダブルクォーテーション)」で囲むことをおすすめします。このオプションを省略すると、空の文字列に設定されます。</li>
+<li><code>--option [string]</code><br>おまけ機能です。処理対象とするHSP3スクリプトファイルを実行する際のコマンドラインオプションを文字列で設定します。文字列内にスペースが含まれる場合、「<code>&quot;</code>(ダブルクォーテーション)」で囲むことをおすすめします。現状、文字列が正確にコマンドラインオプションとして確実に機能するかは保証しません。このオプションを省略すると、空の文字列に設定されます。</li>
 </ul>
 <h2 id="ライセンス">ライセンス</h2>
 <p>MIT License</p>

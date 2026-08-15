@@ -318,8 +318,8 @@ return
 #deffunc execute_command str p_command_line,int p_mode, local temp,local temp_list,local temp_command_line,local temp_STARTUPINFOW,local temp_PROCESS_INFORMATION,local temp_hProcess,local temp_hThread,local temp_return
 sdim temp_command_line
 temp_command_line=p_command_line
-if p_mode==0:{
-	temp_command_line="\""+ temp_command_line +"\""
+if p_mode==2:{
+	temp_command_line="'"+ temp_command_line +"'"
 }
 sdim temp_list
 cmdline_analyzer temp_command_line,temp_list
@@ -327,29 +327,26 @@ temp=int(stat)
 temp_command_line=""
 if temp>0:{
 	repeat temp
-	if p_mode==0 || (p_mode!=0 && cnt>0):{
+	if p_mode==2 || (p_mode!=2 && cnt>0):{
 		if strlen(temp_list(cnt))>=2:{
 			if strmid(temp_list(cnt),0,1)==strmid(temp_list(cnt),-1,1) && (strmid(temp_list(cnt),0,1)=="\"" || strmid(temp_list(cnt),0,1)=="'"):{
-				switch strmid(temp_list(cnt),0,1)
-				case "\""
-				temp_list(cnt)=trim_quotes(temp_list(cnt))
-				strrep temp_list(cnt),"\"","\\\""
-				swbreak
-				case "'"
 				temp_list(cnt)=trim_quotes(temp_list(cnt))
 				strrep temp_list(cnt),"'","''"
-				strrep temp_list(cnt),"\"","\\\""
-				swbreak
-				swend
-				temp_command_line+="\""+ temp_list(cnt) +"\""
+				;strrep temp_list(cnt),"\"","\\\""
+				if p_mode==2:{
+					temp_command_line+=""+ temp_list(cnt) +""
+				} else {
+					temp_command_line+="\\\""+ temp_list(cnt) +"\\\""
+				}
 			} else {
 				strrep temp_list(cnt),"'","''"
-				temp_command_line+="'"+ temp_list(cnt) +"'"
+				;strrep temp_list(cnt),"\"","\\\""
+				temp_command_line+=""+ temp_list(cnt) +""
 			}
 		} else {
-			strrep temp_list(cnt),"''","'"
 			strrep temp_list(cnt),"'","''"
-			temp_command_line+="'"+ temp_list(cnt) +"'"
+			;strrep temp_list(cnt),"\"","\\\""
+			temp_command_line+=""+ temp_list(cnt) +""
 		}
 		if cnt<temp-1:{
 			temp_command_line+=" "
@@ -357,12 +354,19 @@ if temp>0:{
 	}
 	loop
 }
-if p_mode==0:{
-	temp_command_line="powershell.exe -NoProfile -Command \"Write-Host '"+ temp_command_line +"' -ForegroundColor Red\""
-} else {
+switch p_mode
+case 0
+	temp_list(0)=trim_quotes(temp_list(0))
+	temp_command_line="powershell.exe -NoProfile -Command '"+ temp_list(0) +" "+ temp_command_line +"'"
+swbreak
+case 1
 	temp_list(0)=trim_quotes(temp_list(0))
 	temp_command_line="powershell.exe -NoProfile -Command \"Start-Process -FilePath '"+ temp_list(0) +"' -ArgumentList '"+ temp_command_line +"' -NoNewWindow -Wait\""
-}
+swbreak
+case 2
+	temp_command_line="powershell.exe -NoProfile -Command \"Write-Host '"+ temp_command_line +"' -ForegroundColor Red\""
+swbreak
+swend
 
 sdim temp_STARTUPINFOW
 struct_make STARTUPINFOW,temp_STARTUPINFOW
@@ -411,7 +415,10 @@ return temp_return
 dialog p_message,1,p_title
 #else
 temp=p_title,p_message
-execute_command "<<"+ temp(0) +">> "+ temp(1) +"",0
+repeat 2
+strrep temp(cnt),"\"","\\\""
+loop
+execute_command "<<"+ temp(0) +">> "+ temp(1) +"",2
 #endif
 return
 
@@ -593,7 +600,7 @@ switch execute_mode
 case "run"
 	temp_command="'"+ system_path +"\\"+ temp_runtime +"' '"+ ax_name +"'"
 	if command_option!="":{
-		temp_command+=" '"+ command_option +"'"
+		temp_command+=" "+ command_option +""
 	}
 	execute_command temp_command,1
 swbreak

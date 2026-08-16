@@ -230,7 +230,7 @@ switch temp_char
 	} else {
 		if temp_string_flag==1:{
 			if cnt!=0:{
-				if temp_char_list(cnt-1)=="`":{
+				if temp_char_list(cnt-1)=="\\":{
 				} else {
 					temp_string_flag=0
 				}
@@ -243,6 +243,7 @@ switch temp_char
 	}
 	temp_space_flag=0
 	swbreak
+	/*
 	case "'"
 	temp_list(temp_count)+=temp_char
 	if temp_string_flag==0:{
@@ -263,6 +264,7 @@ switch temp_char
 	}
 	temp_space_flag=0
 	swbreak
+	*/
 	default
 	temp_list(temp_count)+=temp_char
 	temp_space_flag=0
@@ -321,49 +323,45 @@ temp_command_line=p_command_line
 if p_mode==2:{
 	temp_command_line="'"+ temp_command_line +"'"
 }
+
 sdim temp_list
 cmdline_analyzer temp_command_line,temp_list
 temp=int(stat)
 temp_command_line=""
+
 if temp>0:{
 	repeat temp
 	if p_mode==2 || (p_mode!=2 && cnt>0):{
-		if strlen(temp_list(cnt))>=2:{
-			if strmid(temp_list(cnt),0,1)==strmid(temp_list(cnt),-1,1) && (strmid(temp_list(cnt),0,1)=="\"" || strmid(temp_list(cnt),0,1)=="'"):{
-				temp_list(cnt)=trim_quotes(temp_list(cnt))
-				strrep temp_list(cnt),"'","''"
-				;strrep temp_list(cnt),"\"","\\\""
-				if p_mode==2:{
-					temp_command_line+=""+ temp_list(cnt) +""
-				} else {
-					temp_command_line+="\\\""+ temp_list(cnt) +"\\\""
-				}
-			} else {
-				strrep temp_list(cnt),"'","''"
-				;strrep temp_list(cnt),"\"","\\\""
-				temp_command_line+=""+ temp_list(cnt) +""
-			}
-		} else {
-			strrep temp_list(cnt),"'","''"
-			;strrep temp_list(cnt),"\"","\\\""
-			temp_command_line+=""+ temp_list(cnt) +""
-		}
+		temp_command_line+=""+ temp_list(cnt) +""
 		if cnt<temp-1:{
-			temp_command_line+=" "
+			if p_mode==1:{
+				temp_command_line+=","
+			} else {
+				temp_command_line+=" "
+			}
 		}
 	}
 	loop
 }
+
 switch p_mode
 case 0
-	temp_list(0)=trim_quotes(temp_list(0))
+	strrep temp_command_line,"'","''"
+	strrep temp_command_line,"\"","\\\""
+	strrep temp_list(0),"'","''"
+	strrep temp_list(0),"\"","\\\""
 	temp_command_line="powershell.exe -NoProfile -Command '"+ temp_list(0) +" "+ temp_command_line +"'"
 swbreak
 case 1
-	temp_list(0)=trim_quotes(temp_list(0))
-	temp_command_line="powershell.exe -NoProfile -Command \"Start-Process -FilePath '"+ temp_list(0) +"' -ArgumentList '"+ temp_command_line +"' -NoNewWindow -Wait\""
+	strrep temp_command_line,"'","''"
+	strrep temp_command_line,"\"","\\\""
+	strrep temp_list(0),"'","''"
+	strrep temp_list(0),"\"","\\\""
+	temp_command_line="powershell.exe -NoProfile -Command \"Start-Process -FilePath '"+ temp_list(0) +"' -ArgumentList "+ temp_command_line +" -NoNewWindow -Wait\""
 swbreak
 case 2
+	temp_command_line=trim_quotes(temp_command_line)
+	strrep temp_command_line,"'","''"
 	temp_command_line="powershell.exe -NoProfile -Command \"Write-Host '"+ temp_command_line +"' -ForegroundColor Red\""
 swbreak
 swend
@@ -598,9 +596,9 @@ hsc3_getruntime temp_runtime,ax_name
 if temp_runtime=="":temp_runtime="hsp3.exe"
 switch execute_mode
 case "run"
-	temp_command="'"+ system_path +"\\"+ temp_runtime +"' '"+ ax_name +"'"
+	temp_command="\""+ system_path +"\\"+ temp_runtime +"\" \""+ ax_name +"\""
 	if command_option!="":{
-		temp_command+=" "+ command_option +""
+		temp_command+=" \""+ command_option +"\""
 	}
 	execute_command temp_command,1
 swbreak

@@ -14,7 +14,7 @@
 
 #module struct_mod size,member_count,member_offset,member_size,alignment
 
-#ifndef __hsp64__@
+#ifndef __hsp64__
 #const ptrsize 4
 #else
 #const ptrsize 8
@@ -156,7 +156,7 @@ temp_string=p_string
 temp_index=0
 while
 temp_byte=peek(temp_string,temp_index)
-#ifndef __hsp64__@
+#ifndef __hsp64__
 sdim temp_char,3
 if (0x81<=temp_byte && temp_byte<=0x9f) || (0xe0<=temp_byte && temp_byte<=0xef):{
 	memcpy temp_char,temp_string,2,0,temp_index
